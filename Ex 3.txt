@@ -1,0 +1,18 @@
+import gradio as gr, ollama
+
+def generate_blog(topic, tone, length, outline):
+    prompt = f"Write a {length}-word {tone} blog on '{topic}' using this outline:\n{outline}"
+    res = ollama.chat(model="gemma3:1b", messages=[{"role": "user", "content": prompt}])
+    return res["message"]["content"]
+
+gr.Interface(
+    fn=generate_blog,
+    inputs=[
+        gr.Textbox(label="Topic"),
+        gr.Radio(["Informative", "Conversational", "Persuasive", "Formal", "Casual"], label="Tone"),
+        gr.Dropdown(["200", "300", "500", "700", "1000"], label="Length (words)"),
+        gr.Textbox(label="Outline", lines=2)
+    ],
+    outputs="text",
+    title="🧠 Simple AI Blog Generator (Ollama)"
+).launch()
